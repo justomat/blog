@@ -1,7 +1,7 @@
 {
-	"name": "astro-cactus",
+	"name": "blog",
 	"version": "3.6.1",
-	"private": false,
+  "private": true,
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
