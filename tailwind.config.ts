@@ -29,8 +29,12 @@ export default {
 			},
 			fontFamily: {
 				// Add any custom fonts here
-				sans: [...fontFamily.sans],
+				sans: ['"Inria Sans"', ...fontFamily.sans],
 				serif: [...fontFamily.serif],
+				mono: [
+					'"JuliaMono-Regular", ui-monospace, monospace',
+					{ fontFeatureSettings: "'ss08','ss09','ss20','cv03','zero'" },
+				],
 			},
 			transitionProperty: {
 				height: "height",

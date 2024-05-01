@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: JuliaMono-Regular;
+	src: url("https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.052/JuliaMono-Regular.woff2");
+}
+
 @layer base {
 	:root {
 		color-scheme: light;
@@ -26,9 +31,10 @@
 
 	html {
 		@apply scroll-smooth;
+		font-size: 18px;
 	}
 
 	html body {
-		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-bgColor px-8 pt-16 font-mono text-sm font-normal text-textColor antialiased;
+		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-bgColor px-8 pt-16 text-sm font-normal text-textColor antialiased;
 	}
 }
