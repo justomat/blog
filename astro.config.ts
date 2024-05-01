@@ -18,7 +18,7 @@ export default defineConfig({
 		],
 		remarkRehype: { footnoteLabelProperties: { className: [""] } },
 		shikiConfig: {
-			theme: "dracula",
+			theme: "dark-plus",
 			wrap: true,
 		},
 	},
