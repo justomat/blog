@@ -1,0 +1,214 @@
+---
+title: "Stripper for Beginners"
+publishDate: "1 May 2024"
+description: "Using imagemagick to strip any profiles, comments, or these PNG chunks: (bKGD,cHRM,EXIF,gAMA,iCCP,iTXt,sRGB,tEXt,zCCP,zTXt,date) from image files"
+tags: ["how-to", "util", "imagemagick", "metadata"]
+---
+
+import { Picture } from "astro:assets";
+import copas from "./img/copas.png";
+
+# Intro
+
+I was applying for New Zealand visa and my photo got rejected for exceeding the max size **AND not meeting the min resolution** at the same time 😅.
+After spending more than 2 seconds trying to form a thought, I decided to just google my problem and hope someone already has.
+
+<figure>
+	<Picture
+		src={copas}
+		formats={["avif", "webp"]}
+		alt="A photo of a fictious book cover mocking programmer's habit of copy-pasting code from stackoverflow"
+	/>
+	<figcaption class="text-center">The engineer's bible</figcaption>
+</figure>
+
+My first thought was to look for something to strip metadata from the image files. I found most stackoverflow/blogs
+recommend using [exiftool](https://exiftool.org/), but I felt reluctant to install a new tool just for
+this. A couple searches later, I found that [imagemagick](https://imagemagick.org/index.php) can do the
+job. Thats good because I happen to have it installed from a past project.
+
+Anyway here's how I did it:
+
+## Enough talk, show me the code
+
+Okay that should be enough words for SEO, here's the code:
+
+### Setup
+
+First you obviously need to have imagemagick installed, if you're on a mac you can install it using brew:
+
+```sh
+brew install imagemagick
+```
+
+### What you came here for
+
+Then you can use the `mogrify` command to strip metadata from the image files.:
+
+```sh
+mogrify -strip *.png
+
+# Example output:
+# input.png PNG 995x956 995x956+0+0 8-bit TrueColorAlpha sRGB 938272B 0.040u 0:00.028
+# input.png PNG 995x956 995x956+0+0 8-bit TrueColorAlpha sRGB 938272B 0.160u 0:00.159
+```
+
+Don't worry about the `.png` this will work on file format as well.
+This command will strip any profiles, comments, or these PNG chunks: (bKGD, cHRM, EXIF, gAMA, iCCP, iTXt, sRGB, tEXt, zCCP, zTXt, date) from the image files.
+You can also use the `-verbose` flag to see what is being stripped:
+
+## Some tips
+
+```sh
+mogrify -strip -verbose *.png
+```
+
+You can also use the `-format` flag to convert the images to a different format, for example to convert all the images to webp:
+
+```sh
+mogrify -strip -format webp *.png
+```
+
+### What if I want to keep the original files?
+
+There's also the `convert` command to save the output in a different name:
+
+```sh
+convert input.png -strip output.png
+```
+
+Likewise it has both `-verbose` and `format` flags as well:
+
+```sh
+convert input.png -strip -verbose output.png
+convert input.png -strip -format webp output.webp
+```
+
+### How do I check if the metadata has been stripped?
+
+You can use the `identify` command to check if the metadata has been stripped from the image files:
+
+```sh
+identify -verbose input.png
+```
+
+You should see that the metadata has been stripped from the image files, here's an example:
+
+{/* prettier-ignore */}
+<details style="max-height:480px;overflow:scroll;">
+  <summary>Sample output</summary>
+
+```sh
+Image:
+  Filename: copas.png
+  Permissions: rw-r--r--
+  Format: PNG (Portable Network Graphics)
+  Mime type: image/png
+  Class: DirectClass
+  Geometry: 995x956+0+0
+  Units: Undefined
+  Colorspace: sRGB
+  Type: TrueColorAlpha
+  Endianness: Undefined
+  Depth: 8-bit
+  Channels: 4.0
+  Channel depth:
+    Red: 8-bit
+    Green: 8-bit
+    Blue: 8-bit
+    Alpha: 1-bit
+  Channel statistics:
+    Pixels: 951220
+    Red:
+      min: 0  (0)
+      max: 255 (1)
+      mean: 157.46 (0.617489)
+      median: 229 (0.898039)
+      standard deviation: 110.821 (0.434593)
+      kurtosis: -1.58947
+      skewness: -0.493305
+      entropy: 0.611703
+    Green:
+      min: 0  (0)
+      max: 255 (1)
+      mean: 197.068 (0.772817)
+      median: 234 (0.917647)
+      standard deviation: 66.679 (0.261486)
+      kurtosis: 0.0415249
+      skewness: -0.909079
+      entropy: 0.604423
+    Blue:
+      min: 0  (0)
+      max: 255 (1)
+      mean: 191.779 (0.752075)
+      median: 230 (0.901961)
+      standard deviation: 70.4805 (0.276394)
+      kurtosis: -0.512684
+      skewness: -0.729027
+      entropy: 0.611983
+    Alpha:
+      min: 255  (1)
+      max: 255 (1)
+      mean: 255 (1)
+      median: 255 (1)
+      standard deviation: 0 (0)
+      kurtosis: 0
+      skewness: 0
+      entropy: 0
+  Image statistics:
+    Overall:
+      min: 0  (0)
+      max: 255 (1)
+      mean: 200.327 (0.785595)
+      median: 237 (0.929412)
+      standard deviation: 61.9952 (0.243118)
+      kurtosis: -0.515157
+      skewness: -0.532853
+      entropy: 0.457027
+  Rendering intent: Perceptual
+  Gamma: 0.454545
+  Chromaticity:
+    red primary: (0.64,0.33,0.03)
+    green primary: (0.3,0.6,0.1)
+    blue primary: (0.15,0.06,0.79)
+    white point: (0.3127,0.329,0.3583)
+  Matte color: grey74
+  Background color: white
+  Border color: srgb(223,223,223)
+  Transparent color: black
+  Interlace: None
+  Intensity: Undefined
+  Compose: Over
+  Page geometry: 995x956+0+0
+  Dispose: Undefined
+  Iterations: 0
+  Compression: Zip
+  Orientation: TopLeft
+  Properties:
+    date:create: 2024-05-01T09:55:25+00:00
+    date:modify: 2024-05-01T09:55:25+00:00
+    date:timestamp: 2024-05-01T10:11:53+00:00
+    png:IHDR.bit-depth-orig: 8
+    png:IHDR.bit_depth: 8
+    png:IHDR.color-type-orig: 6
+    png:IHDR.color_type: 6 (RGBA)
+    png:IHDR.interlace_method: 0 (Not interlaced)
+    png:IHDR.width,height: 995, 956
+    signature: 85e8424ae990ac2d1bfd4d344bd94a7c5962704ac942c6fd7b79e1ae15c50b09
+  Artifacts:
+    verbose: true
+  Tainted: False
+  Filesize: 980.178KiB
+  Number pixels: 951220
+  Pixel cache type: Memory
+  Pixels per second: 67.3782MP
+  User time: 0.020u
+  Elapsed time: 0:01.014
+  Version: ImageMagick 7.1.1-31 Q16-HDRI aarch64 22148 https://imagemagick.org
+```
+
+</details>
+
+# Goodbye
+
+That's all! I hope this helps you strip metadata from image files using imagemagick. Oh and wish me luck on my visa application 🇳🇿.

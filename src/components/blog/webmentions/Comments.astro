@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { Icon } from "astro-icon";
+import { Icon } from "astro-icon/components";
 import type { WebmentionsChildren } from "@/types";
 
 interface Props {
@@ -16,7 +16,7 @@ const comments = mentions.filter(
 );
 
 /**
- ! show a link to the mention 
+ ! show a link to the mention
 
  */
 ---
