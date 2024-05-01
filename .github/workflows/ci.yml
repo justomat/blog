@@ -29,3 +29,4 @@ jobs:
           projectName: "blog"
           directory: "dist"
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: "3"
