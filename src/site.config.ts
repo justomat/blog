@@ -38,11 +38,10 @@ export const menuLinks: Array<{ title: string; path: string }> = [
 	},
 ];
 
-
 // https://expressive-code.com/reference/configuration/
 export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
 	// One dark, one light theme => https://expressive-code.com/guides/themes/#available-themes
-	themes: ["dracula", "github-light"],
+	themes: ["github-light", "github-dark"],
 	themeCssSelector(theme, { styleVariants }) {
 		// If one dark and one light theme are available
 		// generate theme CSS selectors compatible with cactus-theme dark mode switch
@@ -64,7 +63,5 @@ export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
 		codeLineHeight: "1.7142857rem",
 		borderRadius: "4px",
 		codePaddingInline: "1rem",
-		codeFontFamily:
-			'JuliaMono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;',
 	},
 };
