@@ -3,6 +3,12 @@ name: ci
 on:
   push:
     branches: [main]
+    paths:
+      - 'public/**'
+      - 'src/**'
+      - '*.json'
+      - 'bun.lockb'
+      - '*.config.{js,ts}'
   pull_request:
     branches: [main]
   workflow_dispatch:
