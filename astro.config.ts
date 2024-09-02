@@ -1,10 +1,10 @@
-import { readFileSync } from "node:fs";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
+import { readFileSync } from "node:fs";
 import { expressiveCodeOptions } from "./src/site.config";
 
 // Remark plugins
@@ -15,9 +15,6 @@ import { remarkReadingTime } from "./src/plugins/remark-reading-time";
 
 // Rehype plugins
 import rehypeExternalLinks from "rehype-external-links";
-import remarkUnwrapImages from "remark-unwrap-images";
-
-import { expressiveCodeOptions } from "./src/site.config";
 
 // https://astro.build/config
 export default defineConfig({
@@ -59,7 +56,6 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
-    plugins: [rawFonts([".ttf", ".woff"])],
     plugins: [rawFonts([".ttf", ".woff"])],
   },
 });
