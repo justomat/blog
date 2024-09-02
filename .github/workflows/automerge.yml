@@ -16,5 +16,5 @@ jobs:
       - uses: fastify/github-action-merge-dependabot@v3
         with:
           pr-number: ${{ github.event.inputs.pr-number }}
-          target-development: 'major'
-          target-production: 'minor'
+          target-development: "major"
+          target-production: "minor"

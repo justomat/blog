@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'public/**'
-      - 'src/**'
-      - '*.json'
-      - 'bun.lockb'
-      - '*.config.{js,ts}'
+      - "public/**"
+      - "src/**"
+      - "*.json"
+      - "bun.lockb"
+      - "*.config.{js,ts}"
   workflow_dispatch:
 
 jobs:

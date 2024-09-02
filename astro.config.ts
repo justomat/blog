@@ -1,64 +1,65 @@
-import { defineConfig } from "astro/config";
-import {readFileSync} from "node:fs";
 import mdx from "@astrojs/mdx";
-import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
-import remarkUnwrapImages from "remark-unwrap-images";
-import rehypeExternalLinks from "rehype-external-links";
-import { remarkReadingTime } from "./src/utils/remark-reading-time";
-import icon from "astro-icon";
+import tailwind from "@astrojs/tailwind";
+import { defineConfig } from "astro/config";
 import expressiveCode from "astro-expressive-code";
+import icon from "astro-icon";
+import { readFileSync } from "node:fs";
+import rehypeExternalLinks from "rehype-external-links";
+import remarkUnwrapImages from "remark-unwrap-images";
+
 import { expressiveCodeOptions } from "./src/site.config";
+import { remarkReadingTime } from "./src/utils/remark-reading-time";
 
 // https://astro.build/config
 export default defineConfig({
-	// ! Please remember to replace the following site property with your own domain
-	site: "https://blog.geraldisutanto.com/",
-  markdown: {
-		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
+	image: {
+		domains: ["webmention.io"],
+	},
+	integrations: [
+		expressiveCode(expressiveCodeOptions),
+		icon(),
+		tailwind({
+			applyBaseStyles: false,
+		}),
+		sitemap(),
+		mdx({}),
+	],
+	markdown: {
 		rehypePlugins: [
 			[
 				rehypeExternalLinks,
 				{
-					target: "_blank",
 					rel: ["nofollow, noopener, noreferrer"],
+					target: "_blank",
 				},
 			],
 		],
+		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
 		remarkRehype: {
 			footnoteLabelProperties: {
 				className: [""],
 			},
 		},
 	},
-	integrations: [
-    expressiveCode(expressiveCodeOptions),
-		icon(),
-    tailwind({
-      applyBaseStyles: false,
-		}),
-		sitemap(),
-    mdx({}),
-	],
-	image: {
-		domains: ["webmention.io"],
-	},
 	// https://docs.astro.build/en/guides/prefetch/
 	prefetch: true,
-  vite: {
-		plugins: [rawFonts([".ttf", ".woff"])],
+	// ! Please remember to replace the following site property with your own domain
+	site: "https://blog.geraldisutanto.com/",
+	vite: {
 		optimizeDeps: {
 			exclude: ["@resvg/resvg-js"],
 		},
+		plugins: [rawFonts([".ttf", ".woff"])],
 	},
 });
 
-function rawFonts(ext: Array<string>) {
+function rawFonts(ext: string[]) {
 	return {
 		name: "vite-plugin-raw-fonts",
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore:next-line
-		transform(_, id) {
+		// @ts-expect-error:next-line
+		transform(_, id: string) {
 			if (ext.some((e) => id.endsWith(e))) {
 				const buffer = readFileSync(id);
 				return {
