@@ -8,7 +8,8 @@
 }
 
 @layer base {
-	:root {
+	:root,
+	:root[data-theme="light"] {
 		color-scheme: light;
 		/* https://tailwindcss.com/docs/customizing-colors#using-css-variables */
 		--theme-bg: 0deg 0% 98%;
@@ -19,7 +20,7 @@
 		--theme-quote: 351deg 66% 48%;
 	}
 
-	:root.dark {
+	:root[data-theme="dark"] {
 		color-scheme: dark;
 		--theme-bg: 210deg 6% 12%;
 		--theme-link: 330deg 49% 67%;
@@ -29,12 +30,13 @@
 		--theme-quote: 102deg 100% 86%;
 	}
 
-	html {
-		@apply scroll-smooth;
-		font-size: 18px;
-	}
+}
 
-	html body {
-		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-bgColor px-8 pt-16 text-sm font-normal text-textColor antialiased;
-	}
+html {
+  @apply scroll-smooth;
+  font-size: 18px;
+}
+
+html body {
+  @apply mx-auto flex min-h-screen max-w-3xl flex-col bg-bgColor px-8 pt-16 text-sm font-normal text-textColor antialiased;
 }
