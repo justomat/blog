@@ -1,0 +1,316 @@
+---
+title: "Testable Number Pad in React Native"
+publishDate: "7 Dec 2024"
+description: "Learn how to design and implement a testable number pad in React Native."
+tags: ["react-native", "expo", "testing", "component-design", "jest"]
+---
+
+import { Picture } from "astro:assets";
+
+## Intro
+
+Building a reliable number pad for financial applications is more complex than it appears. At our cryptocurrency exchange, we faced a challenge: creating a numeric input that works consistently across iOS and Android while meeting our team's standards for usability and testability.
+
+Standard mobile keypads often lack the flexibility needed for specialized financial interfaces. We needed a custom solution that could adapt to different input scenarios—trading, withdrawing funds, managing portfolios—while remaining easy to test and maintain.
+
+Our goal was practical: design a number pad component that integrates smoothly across our application, provides a consistent user experience, and passes rigorous unit testing. In this post, I'll share our approach to building a flexible, testable number pad in React Native that balances technical precision with user-friendly design.
+
+## What We'll Build
+
+Our primary challenges broke down into three key areas:
+
+1. **Cross-Platform Consistency**
+
+The most immediate problem was ensuring our number pad looked and behaved identically on iOS and Android. React Native promised cross-platform development, but UI components can quickly diverge if not carefully architected. We needed a solution that would render consistently, with identical sizing, touch targets, and interaction patterns across both platforms.
+
+2. **Flexible Input Handling**
+
+A cryptocurrency interface requires nuanced numeric input. We weren't just building a simple keypad, but an input mechanism that could handle:
+
+- Decimal point restrictions
+- Maximum/minimum value constraints
+- Real-time formatting (like currency separators)
+- Different input contexts (trade amounts, wallet addresses, transaction fees)
+
+3. **Testability**
+
+Our engineering culture demanded comprehensive test coverage. This meant designing a component that could be:
+
+- Easily unit tested
+- Predictable state management
+- Configurable without complex prop drilling
+
+## Setup
+
+### React Native / Expo Project
+
+Before we dive into the implementation, make sure you have a React Native project set up.
+
+```sh
+pnpx create-expo numberpad
+cd numberpad
+```
+
+The template comes with example tab navigation and a few screens. To focus on the `NumPad` component, we'll remove the unnecessary files.
+
+```sh
+pnpm reset-project
+```
+
+Now lets add some dependencies.
+
+### Gluestack
+
+We'll use [Gluestack](https://gluestack.io/ui/docs/home/getting-started/installation) to style our components.
+Gluestack is a component library that extends Nativewind,
+it comes with useful fundamental components and allows us to use tailwindcss classes in React Native.
+
+```sh
+pnpx gluestack-ui init
+pnpx gluestack-ui add --all
+```
+
+### Jest and Testing Library
+
+```sh
+pnpx expo install -- --save-dev @testing-library/react-native
+```
+
+we'll also need to configure jest to use `@testing-library/react-native` for testing.
+
+```diff
+"jest": {
+-	"preset": "jest-expo"
++	"preset": "jest-expo",
++	"setupFilesAfterEnv": ["@testing-library/react-native/extend-expect"],
++	"transformIgnorePatterns": [
++		"node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|@gluestack-ui/.*))"
++	]
+},
+```
+
+## Designing the NumPad
+
+The number pad consists of buttons for numbers 0-9, a backspace button, and a decimal button.
+We'll start by creating a `NumPad` component that renders these buttons in a grid layout.
+
+### NumPadButton Component
+
+`NumPadButton` component represents a single button on the number pad.
+This component will receive a `value` prop to determine the number displayed on the button.
+We'll also add a `onPress` prop to handle button clicks.
+
+```jsx
+import { Button } from "@/components/ui/button";
+import { memo } from "react";
+import { Text, View } from "react-native";
+
+type NumPadButtonProps = {
+	text: string;
+	onPress: (text: string) => void;
+};
+
+const NumPadButton = memo(({ text, onPress }: NumPadButtonProps) => (
+	<Button
+		className="h-20 flex-1 items-center justify-center bg-transparent"
+		onPress={() => onPress(text)}
+	>
+		<Text className="font-bold text-5xl text-white">{text}</Text>
+	</Button>
+));
+```
+
+### NumPad Component
+
+The `NumPad` component will render the `NumPadButton` components in a grid layout.  We'll also add a `decimal` button and a `backspace` button.
+
+```jsx
+type NumPadProps = {
+	value: string;
+	setValue: Dispatch<SetStateAction<string>>;
+	maxLength?: number;
+};
+
+export function NumPad({ value, setValue, maxLength }: NumPadProps) {
+	const handlePress = (num: string) => {
+		if (maxLength && value.length >= maxLength) return;
+		if (!value || value === "0") return setValue(num);
+
+		setValue((prev) => prev + num);
+	};
+
+	const handleDecimal = () => {
+		if (value.includes(".")) return;
+		if (!value) setValue("0.");
+		else setValue((prev) => `${prev}.`);
+	};
+
+	const handleBackspace = () => {
+		setValue((prev) => prev.slice(0, -1));
+	};
+
+	return (
+		<View className="gap-4 p-4">
+			<View className="flex-row justify-around gap-4">
+				<NumPadButton text="1" onPress={handlePress} />
+				<NumPadButton text="2" onPress={handlePress} />
+				<NumPadButton text="3" onPress={handlePress} />
+			</View>
+
+			<View className="flex-row justify-around gap-4">
+				<NumPadButton text="4" onPress={handlePress} />
+				<NumPadButton text="5" onPress={handlePress} />
+				<NumPadButton text="6" onPress={handlePress} />
+			</View>
+
+			<View className="flex-row justify-around gap-4">
+				<NumPadButton text="7" onPress={handlePress} />
+				<NumPadButton text="8" onPress={handlePress} />
+				<NumPadButton text="9" onPress={handlePress} />
+			</View>
+
+			<View className="flex-row justify-around gap-4">
+				<NumPadButton text="." onPress={handleDecimal} />
+				<NumPadButton text="0" onPress={handlePress} />
+				<NumPadButton text="⌫" onPress={handleBackspace} />
+			</View>
+		</View>
+	);
+}
+```
+
+## Using the NumPad
+
+Now we can use the `NumPad` component in our application.
+
+```jsx
+import { useState } from "react";
+import { NumPad } from "@/components/NumPad";
+
+export default function App() {
+  const [value, setValue] = useState("");
+
+  return (
+    <>
+      <View className="items-center justify-center p-4 py-20">
+        <Text className={"font-bold text-5xl text-white"}>
+          ${amount ? withThousandSeparator(amount) : 0}
+        </Text>
+      </View>
+      <View className="">
+        <NumPad value={amount} setValue={setAmount} maxLength={13} />
+      </View>
+    </>
+  )
+}
+```
+
+## Preparing to Write Tests
+
+We'll write tests for the `NumPad` component using Jest and React Testing Library.
+First lets import the numpad component.
+
+```js
+import { NumPad } from "../numpad";
+```
+
+Next we'll write wrap it in a TestComponent to see the text generated by the numpad.
+
+```jsx
+const TestComponent = ({ maxLength }) => {
+	const [value, setValue] = useState("");
+	return (
+		<>
+			<Text testID="display">{value}</Text>
+			<NumPad value={value} setValue={setValue} maxLength={maxLength} />
+		</>
+	);
+};
+```
+
+Now we render it `beforeEach` tests and write a helper function to check the text displayed.
+
+```jsx
+describe("NumPad", () => {
+	let screen;
+
+	beforeEach(() => {
+		screen = render(<TestComponent maxLength={10} />);
+	});
+
+	const shouldDisplay = (text) => {
+		const output = screen.getByTestId("display");
+		return expect(output).toHaveTextContent(text);
+	};
+
+  // tests
+}
+```
+
+## Writing the Tests
+
+```jsx
+it("should render all buttons", () => {
+  const buttons = "1234567890.⌫".split("");
+  for (const button of buttons) {
+    expect(screen.getByText(button)).toBeOnTheScreen();
+  }
+});
+
+it("should update value on number press", () => {
+  fireEvent.press(screen.getByRole("button", { name: "1" }));
+  fireEvent.press(screen.getByRole("button", { name: "2" }));
+  fireEvent.press(screen.getByRole("button", { name: "3" }));
+
+  shouldDisplay("123");
+});
+
+it("should handle decimal point correctly", () => {
+  fireEvent.press(screen.getByText("."));
+  shouldDisplay("0.");
+
+  fireEvent.press(screen.getByText("1"));
+  shouldDisplay("0.1");
+
+  fireEvent.press(screen.getByText("."));
+  shouldDisplay("0.1");
+});
+
+it("should handle backspace correctly", () => {
+  fireEvent.press(screen.getByText("1"));
+  fireEvent.press(screen.getByText("2"));
+  fireEvent.press(screen.getByText("3"));
+  fireEvent.press(screen.getByText("⌫"));
+  shouldDisplay("12");
+
+  fireEvent.press(screen.getByText("⌫"));
+  shouldDisplay("1");
+
+  fireEvent.press(screen.getByText("⌫"));
+  expect(screen.getByTestId("display")).toBeEmptyElement();
+});
+
+it("should respect maxLength", () => {
+  for (let i = 0; i < 10; i++) {
+    fireEvent.press(screen.getByRole("button", { name: "1" }));
+  }
+  shouldDisplay("1111111111");
+
+  fireEvent.press(screen.getByText("1"));
+  shouldDisplay("1111111111"); // No change after maxLength
+});
+```
+
+## Conclusion
+
+Building a robust, cross-platform number pad in React Native isn't just about writing code—it's about creating an experience that feels intuitive and reliable across different devices and contexts. By focusing on three core principles—cross-platform consistency, flexible input handling, and comprehensive testability—we've developed a number pad component that goes beyond mere functionality.
+Our approach demonstrates that thoughtful component design can solve complex UI challenges. By leveraging tools like Gluestack and React Native Testing Library, we've created a solution that:
+
+- Renders consistently on iOS and Android
+- Handles nuanced input scenarios
+- Provides predictable state management
+- Supports rigorous unit testing
+
+For teams working in fintech, trading platforms, or any application requiring precise numeric input, this pattern offers a blueprint for creating components that are both user-friendly and technically robust.
+The real power lies not just in the code itself, but in the design philosophy: prioritize user experience, anticipate diverse use cases, and never compromise on testability. As mobile applications continue to grow in complexity, these principles will remain crucial in developing high-quality, maintainable software.
+Remember, a great user interface is more than pixels and interactions—it's about creating moments of effortless, intuitive engagement.
