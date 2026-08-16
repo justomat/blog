@@ -1,35 +1,169 @@
 ---
-import { Image } from "astro:assets";
-import aboutImg from "@/assets/about-astro.png";
 import PageLayout from "@/layouts/Base.astro";
 
 const meta = {
 	title: "About",
-	description: "Short description about the blog and author",
+	description: "Geraldi Sutanto, senior software engineer based in Jakarta, Indonesia.",
 };
+
+const experience = [
+	{
+		company: "ShopeePay",
+		role: "Senior Engineer",
+		location: "Jakarta",
+		period: "2025 - present",
+		highlights: ["Leading the admin portal team."],
+	},
+	{
+		company: "Bitwyre AG",
+		role: "Senior Engineer",
+		location: "Jakarta",
+		period: "2024 - 2025",
+		highlights: [
+			"Developed MVP iOS and Android clients under tight time constraints.",
+			"Set up observability for business and engineering metrics to support decisions and surface issues.",
+			"Worked with legal processes and compliance requirements for a crypto and financial business.",
+		],
+	},
+	{
+		company: "Contract Work",
+		role: "Web3 Developer",
+		location: "Remote",
+		period: "2022 - 2023",
+		highlights: [
+			"Built landing pages, a raffle application, and hardware-wallet login on the Sui blockchain.",
+			"Delivered additional projects under NDA.",
+		],
+	},
+	{
+		company: "Kargo",
+		role: "Software Engineer",
+		location: "Jakarta",
+		period: "2021 - 2022",
+		highlights: [
+			"Established reusable UI/UX values with design teams to eliminate duplicate design and implementation work.",
+			"Maintained the internal UI library, including its TypeScript migration, CI/CD, Storybook, and tests.",
+			"Created a tool to generate TypeScript types from backend APIs, reducing manual work and errors.",
+		],
+	},
+	{
+		company: "Ruangguru",
+		role: "Software Engineer",
+		location: "Jakarta",
+		period: "2020 - 2021",
+		highlights: [
+			"Helped migrate SkillAcademy from Cordova to React Native and served as the platform subject-matter expert.",
+			"Owned the payment domain: ported code to ReasonML and handled fixes, reviews, and code ownership.",
+			"Solved mobile platform concerns including CI/CD, code signing, DRM playback, push notifications, and store releases.",
+		],
+	},
+	{
+		company: "Traveloka",
+		role: "Software Engineer",
+		location: "Jakarta",
+		period: "2018 - 2020",
+		highlights: [
+			"Revived a legacy cross-platform mobile app for B2B partners during a three-month probation period.",
+			"Worked full stack on a customer-facing web application with Java and React.",
+		],
+	},
+	{
+		company: "3Enix Consulting Sdn. Bhd.",
+		role: "Software Engineer",
+		location: "Kuala Lumpur",
+		period: "2016 - 2017",
+		highlights: ["Delivered full-stack development for major Malaysian banks."],
+	},
+];
 ---
 
 <PageLayout meta={meta}>
-	<div class="space-y-6">
-		<h1 class="title">About</h1>
+	<div class="space-y-12">
+		<section class="space-y-4">
+			<h1 class="title">Geraldi Sutanto</h1>
+			<p class="text-lg">Senior software engineer based in Jakarta, Indonesia.</p>
+			<div class="flex flex-wrap gap-x-4 gap-y-2">
+				<a href="mailto:contact@geraldisutanto.com">contact@geraldisutanto.com</a>
+				<a href="tel:+628111010950">0811-1010-950</a>
+			</div>
+		</section>
 
-		<p>
-			Hey there! I'm Geraldi, and this is my blog. Glad you stopped by! Here you'll find a mix of
-			articles about writing software, functional languages, category theory, and other things I
-			find interesting.
-		</p>
+		<section aria-labelledby="experience-heading">
+			<h2 id="experience-heading" class="title mb-6 text-xl">Experience</h2>
+			<div class="space-y-8">
+				{
+					experience.map((job) => (
+						<article>
+							<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+								<h3 class="font-bold">{job.company}</h3>
+								<p class="text-textColor/70">{job.period}</p>
+							</div>
+							<p class="mb-2 italic">
+								{job.role} <span class="not-italic text-textColor/70">| {job.location}</span>
+							</p>
+							<ul class="list-inside list-disc space-y-1">
+								{job.highlights.map((highlight) => (
+									<li>{highlight}</li>
+								))}
+							</ul>
+						</article>
+					))
+				}
+			</div>
+		</section>
 
-		<p>Here are my some of my awesome built in features:</p>
-		<ul class="list-inside list-disc">
-			<li>I'm ultra fast as I'm a static site</li>
-			<li>I'm fully responsive</li>
-			<li>I come with a light and dark mode</li>
-			<li>I'm easy to customise and add additional content</li>
-			<li>I have Tailwind CSS styling</li>
-			<li>Shiki code syntax highlighting</li>
-			<li>Satori for auto generating OG images for blog posts</li>
-		</ul>
+		<section aria-labelledby="projects-heading">
+			<h2 id="projects-heading" class="title mb-6 text-xl">Selected Projects</h2>
+			<div class="space-y-6">
+				<article>
+					<h3 class="font-bold">
+						<a href="https://raffle.suimonstrx.com">Sui Raffle App</a>
+					</h3>
+					<p>
+						Ported wallet sign-in from Ethereum to Sui, built Discord account linking and the raffle
+						system, and delivered the backend and frontend as a solo developer.
+					</p>
+					<p class="mt-1 text-textColor/70">
+						Next.js, TypeScript, AWS, React Query, Cloudflare Workers, WebAssembly
+					</p>
+				</article>
+				<article>
+					<h3 class="font-bold">SkillAcademy</h3>
+					<p>
+						Contributed to one of Indonesia's leading on-demand learning apps, helping raise its
+						Google Play rating from 3.4 to 4.9.
+					</p>
+					<p class="mt-1 text-textColor/70">
+						ReasonML, TypeScript, React Native, Redux, Firebase, Midtrans
+					</p>
+				</article>
+				<article>
+					<h3 class="font-bold">Traveloka AXES</h3>
+					<p>
+						Solo mobile developer and web team contributor. Automated builds with CI/CD and improved
+						app performance enough to require a deliberate loading delay for the user experience.
+					</p>
+				</article>
+			</div>
+		</section>
 
-		<p></p>
+		<section aria-labelledby="background-heading">
+			<h2 id="background-heading" class="title mb-6 text-xl">Background</h2>
+			<div class="space-y-3">
+				<p>
+					<span class="font-bold">Education:</span> B.Sc. Software Engineering, Asia Pacific University,
+					2016. Honors thesis: "Docker Container Based Java IDE."
+				</p>
+				<p><span class="font-bold">Certification:</span> Google Advanced Data Analytics, 2024.</p>
+				<p>
+					<span class="font-bold">Languages:</span> Indonesian (native), English (professional), Chinese
+					(professional).
+				</p>
+				<p>
+					<span class="font-bold">Career break:</span> Attended a Chinese language program in Xiamen,
+					Fujian (2017 - 2018).
+				</p>
+			</div>
+		</section>
 	</div>
 </PageLayout>
